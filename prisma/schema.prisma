@@ -1,0 +1,185 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id
+  username  String    @unique
+  password  String    @db.Text
+  email     String    @unique
+  avatarUrl String?
+  role      Role      @default(STUDENT)
+  sessions  Session[]
+  student   Student?
+  lecturer  Lecturer?
+
+  createdAt DateTime @default(now())
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  LECTURER
+  STUDENT
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+enum Sexes {
+  MALE
+  FEMALE
+}
+
+model Student {
+  id          String             @id @default(cuid())
+  nim         String             @unique
+  fullName    String             @map("full_name")
+  birthDate   DateTime           @map("birth_date")
+  sex         Sexes
+  phoneNumber String?            @db.VarChar(15)
+  userId      String             @unique
+  user        User               @relation(fields: [userId], references: [id], onDelete: NoAction)
+  majorId     String
+  major       Major              @relation(fields: [majorId], references: [id], onDelete: NoAction)
+  classes     StudentOnClasses[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("students")
+}
+
+model Lecturer {
+  id          String   @id @default(cuid())
+  nip         String   @unique
+  fullName    String   @map("full_name")
+  birthDate   DateTime @map("birth_date")
+  sex         Sexes
+  phoneNumber String?  @db.VarChar(15)
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: NoAction)
+  classes     Class[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("lecturers")
+}
+
+model Faculty {
+  id     String  @id @default(cuid())
+  name   String  @db.VarChar(80)
+  majors Major[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("faculties")
+}
+
+model Major {
+  id        String    @id @default(cuid())
+  name      String    @db.VarChar(50)
+  facultyId String    @map("faculty_id")
+  faculty   Faculty   @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  students  Student[]
+  courses   Course[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("majors")
+}
+
+model Course {
+  id      String  @id @default(cuid())
+  name    String
+  alias   String
+  credit  Int
+  majorId String  @map("major_id")
+  major   Major   @relation(fields: [majorId], references: [id], onDelete: Cascade)
+  classes Class[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("courses")
+}
+
+enum Period {
+  ODD
+  EVEN
+}
+
+model AcademicYear {
+  id      String  @id @default(cuid())
+  year    String // example. Tahun ajaran 2024/2025
+  period  Period
+  classes Class[]
+
+  @@map("academic_years")
+}
+
+model Class {
+  id             String             @id @default(cuid())
+  name           String
+  semester       String             @db.VarChar(2)
+  courseId       String             @map("course_id")
+  course         Course             @relation(fields: [courseId], references: [id], onDelete: NoAction)
+  lecturerId     String             @map("lecturer_id")
+  lecturer       Lecturer           @relation(fields: [lecturerId], references: [id], onDelete: NoAction)
+  academicYearId String             @map("academic_year_id")
+  academicYear   AcademicYear       @relation(fields: [academicYearId], references: [id], onDelete: NoAction)
+  schedules      Schedule[]
+  students       StudentOnClasses[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("classes")
+}
+
+enum DAY {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+}
+
+model Schedule {
+  id      String   @id @default(cuid())
+  room    String
+  day     DAY
+  startAt DateTime @map("start_at") @db.Time()
+  endAt   DateTime @map("end_at") @db.Time()
+  classId String   @map("class_id")
+  class   Class    @relation(fields: [classId], references: [id], onDelete: NoAction)
+
+  @@map("schedules")
+}
+
+model StudentOnClasses {
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+  classId   String
+  class     Class   @relation(fields: [classId], references: [id])
+
+  @@id([studentId, classId])
+  @@map("student_on_classes")
+}
