@@ -24,17 +24,22 @@ import {
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { DataTableViewOptions } from './data-table-view-options';
+import { Button } from './ui/button';
+import { useRouter } from 'next/navigation';
+import { PlusCircledIcon } from '@radix-ui/react-icons';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   filterKey: string;
+  href?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   filterKey,
+  href,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -54,6 +59,8 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const router = useRouter();
+
   return (
     <div>
       <div className="flex items-center justify-between py-4">
@@ -65,7 +72,19 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        <DataTableViewOptions table={table} />
+        <div className="flex items-center gap-4">
+          <DataTableViewOptions table={table} />
+          {!!href && (
+            <Button
+              size="sm"
+              className="flex items-center gap-2"
+              onClick={() => router.push(href)}
+            >
+              <PlusCircledIcon className="size-4" />
+              Tambah
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="rounded-md border">

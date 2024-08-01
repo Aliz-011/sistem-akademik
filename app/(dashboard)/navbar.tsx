@@ -6,8 +6,9 @@ import {
   GearIcon,
   QuestionMarkCircledIcon,
 } from '@radix-ui/react-icons';
-import { Package2, PanelLeft, Search } from 'lucide-react';
+import { Package2, PanelLeft } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
@@ -19,14 +20,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { SearchInput } from './search-input';
 
 import { logout } from '@/actions/user.actions';
-
-// Nanti diganti sesuai role dari user
-import { routes } from './admin/sidebar';
-import { Input } from '@/components/ui/input';
-import Image from 'next/image';
 import { useSession } from '@/hooks/use-session';
+// Route diganti sesuai role dari user
+import { routes } from './admin/sidebar';
 
 export const Navbar = () => {
   const { user } = useSession();
@@ -49,7 +48,7 @@ export const Navbar = () => {
         <SheetContent side="left" className="sm:max-w-xs">
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href="#"
+              href="/"
               className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
               <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
@@ -69,14 +68,7 @@ export const Navbar = () => {
         </SheetContent>
       </Sheet>
 
-      <div className="relative ml-auto flex-1 md:grow-0">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search..."
-          className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
-        />
-      </div>
+      <SearchInput />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

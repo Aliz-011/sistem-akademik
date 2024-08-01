@@ -9,7 +9,7 @@ import { prisma } from './lib/database';
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
 export const lucia = new Lucia(adapter, {
-  sessionExpiresIn: new TimeSpan(3, 'd'),
+  sessionExpiresIn: new TimeSpan(3, 'h'),
   sessionCookie: {
     expires: false,
     attributes: {

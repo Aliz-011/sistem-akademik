@@ -1,24 +1,23 @@
 import { Metadata } from 'next';
 
 import { Header } from '@/components/header';
-import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/data-table';
 import { columns } from './columns';
 
 import { prisma } from '@/lib/database';
 
 export const metadata: Metadata = {
-  title: 'Mahasiswa',
+  title: 'Program studi',
 };
 
-const StudentsPage = async () => {
-  const [students] = await Promise.all([
-    prisma.student.findMany({
+const MajorsPage = async () => {
+  const [majors] = await Promise.all([
+    prisma.major.findMany({
       include: {
-        major: {
+        faculty: {
           select: {
-            id: true,
             name: true,
+            id: true,
           },
         },
       },
@@ -27,16 +26,16 @@ const StudentsPage = async () => {
 
   return (
     <div className="mx-auto grid max-w-screen-xl flex-1 auto-rows-max gap-4 w-full">
-      <Header title="Mahasiswa" subtitle="List seluruh mahasiswa" />
+      <Header title="Program studi" subtitle="List program studi" />
 
       <DataTable
         columns={columns}
-        data={students}
+        data={majors}
         filterKey="name"
-        href="/admin/students/new"
+        href="/admin/majors/new"
       />
     </div>
   );
 };
 
-export default StudentsPage;
+export default MajorsPage;

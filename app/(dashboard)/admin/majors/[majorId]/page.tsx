@@ -3,65 +3,63 @@ import Link from 'next/link';
 
 import { Header } from '@/components/header';
 import { Button } from '@/components/ui/button';
-import { StudentForm } from './student-form';
+
 import { prisma } from '@/lib/database';
+import { MajorForm } from './major-form';
 
 export const generateMetadata = async ({
   params,
 }: {
-  params: { studentId: string };
+  params: { majorId: string };
 }) => {
-  const [student] = await Promise.all([
-    prisma.student.findUnique({
+  const [major] = await Promise.all([
+    prisma.major.findUnique({
       where: {
-        id: params.studentId,
+        id: params.majorId,
       },
     }),
   ]);
 
   return {
-    title: student
-      ? `Edit ${student.fullName.substring(0, 10)}`
-      : 'Tambah mahasiswa',
+    title: major ? `Edit ${major.name}` : 'Tambah program studi',
   };
 };
 
-const StudentDetailPage = async ({
-  params,
+const MajorDetail = async ({
+  params: { majorId },
 }: {
-  params: { studentId: string };
+  params: { majorId: string };
 }) => {
-  const [student, majors] = await Promise.all([
-    prisma.student.findUnique({
+  const [major, faculties] = await Promise.all([
+    prisma.major.findFirst({
       where: {
-        id: params.studentId,
+        id: majorId,
       },
     }),
-
-    prisma.major.findMany(),
+    prisma.faculty.findMany({ select: { id: true, name: true } }),
   ]);
 
-  const options = majors.map((major) => ({
-    label: major.name,
-    value: major.id,
+  const options = faculties.map((faculty) => ({
+    label: faculty.name,
+    value: faculty.id,
   }));
 
   return (
     <div className="mx-auto max-w-[59rem] w-full space-y-4">
       <div className="flex items-center gap-2">
         <Button variant="outline" size="icon" className="size-7" asChild>
-          <Link href="/admin/students">
+          <Link href="/admin/majors">
             <ChevronLeftIcon className="size-4" />
             <span className="sr-only">Back</span>
           </Link>
         </Button>
 
-        <Header title="Form mahasiswa" />
+        <Header title="Form program studi" />
       </div>
 
-      <StudentForm initialValues={student} options={options} />
+      <MajorForm initialValues={major} options={options} />
     </div>
   );
 };
 
-export default StudentDetailPage;
+export default MajorDetail;

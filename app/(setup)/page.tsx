@@ -1,7 +1,7 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { validateRequest } from '@/auth';
-import Link from 'next/link';
 
 const SetupPage = async () => {
   const session = await validateRequest();

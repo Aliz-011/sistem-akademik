@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { Sexes } from '@prisma/client';
 
 export const registerSchema = z.object({
   email: z.string().trim().email({ message: 'Invalid email' }).min(1),
@@ -20,3 +21,26 @@ export const loginSchema = z.object({
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
+
+export const studentSchema = z.object({
+  email: z.string().trim().email({ message: 'Invalid email' }).min(1),
+  nim: z.string().min(8).trim(),
+  fullName: z.string().min(1).trim(),
+  birthDate: z.coerce.date(),
+  sex: z.enum([Sexes.MALE, Sexes.FEMALE]),
+  phoneNumber: z
+    .string()
+    .trim()
+    .regex(/^[0-9]+$/, 'Only numbers are allowed')
+    .optional(),
+  majorId: z.string(),
+});
+
+export type StudentFormValues = z.infer<typeof studentSchema>;
+
+export const majorSchema = z.object({
+  name: z.string().trim().min(3),
+  facultyId: z.string().trim().min(1),
+});
+
+export type MajorFormValues = z.infer<typeof majorSchema>;
