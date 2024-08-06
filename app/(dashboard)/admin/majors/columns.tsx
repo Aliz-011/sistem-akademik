@@ -5,6 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import { Actions } from './actions';
 
 type ColumnsType = Major & { faculty: { name: string; id: string } };
 
@@ -26,5 +27,9 @@ export const columns: ColumnDef<ColumnsType>[] = [
     cell: ({ row }) => (
       <div className="text-sm">{format(row.original.createdAt, 'PPP')}</div>
     ),
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => <Actions id={row.original.id} />,
   },
 ];

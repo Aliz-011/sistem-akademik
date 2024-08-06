@@ -14,7 +14,7 @@ const FacultiesPage = async () => {
   const [faculties] = await Promise.all([prisma.faculty.findMany()]);
 
   return (
-    <div className="mx-auto grid max-w-screen-xl flex-1 auto-rows-max gap-4 w-full">
+    <div className="mx-auto grid max-w-screen-xl p-4 flex-1 auto-rows-max gap-4 w-full">
       <Header title="Fakultas" subtitle="List Fakultas" />
 
       <DataTable

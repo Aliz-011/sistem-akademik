@@ -8,13 +8,9 @@ const SetupPage = async () => {
 
   if (session.user?.role === 'ADMIN') {
     return redirect('/admin');
-  }
-
-  if (session.user?.role === 'STUDENT') {
+  } else if (session.user?.role === 'STUDENT') {
     return redirect('/student');
-  }
-
-  if (session.user?.role === 'LECTURER') {
+  } else if (session.user?.role === 'LECTURER') {
     return redirect('/lecturer');
   }
 

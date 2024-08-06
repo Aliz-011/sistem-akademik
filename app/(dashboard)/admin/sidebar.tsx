@@ -3,43 +3,22 @@
 import { usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import {
-  Home,
-  Library,
-  School,
-  Settings,
-  Users,
-  PlaySquare,
-} from 'lucide-react';
-import { ExitIcon } from '@radix-ui/react-icons';
+import Image from 'next/image';
+import { Settings } from 'lucide-react';
+import { ExitIcon, MagnifyingGlassIcon } from '@radix-ui/react-icons';
 
 import { NavLink } from '../nav-link';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 
 import { logout } from '@/actions/user.actions';
-
-export const routes = [
-  {
-    href: '/admin',
-    label: 'Dashboard',
-    icon: Home,
-  },
-  {
-    href: '/admin/faculties',
-    label: 'Fakultas',
-    icon: School,
-  },
-  {
-    href: '/admin/majors',
-    label: 'Program studi',
-    icon: Library,
-  },
-  {
-    href: '/admin/students',
-    label: 'Mahasiswa',
-    icon: Users,
-  },
-];
+import { adminRoutes } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 
 export const Sidebar = () => {
   const pathname = usePathname();
@@ -51,39 +30,89 @@ export const Sidebar = () => {
   };
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
-        <Link
-          href="/"
-          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-        >
-          <PlaySquare className="h-4 w-4 transition-all group-hover:scale-110" />
-          <span className="sr-only">Acme Inc</span>
-        </Link>
+    <aside className="fixed inset-y-0 z-10 md:flex flex-shrink-0 bg-card overflow-hidden border-r hidden focus:outline-none">
+      {/* MINI COLUMN */}
+      <div className="flex flex-col flex-shrink-0 h-full border-r">
+        {/* logo */}
+        <div className="flex flex-col items-center sm:py-4">
+          <Link
+            href="/"
+            className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+          >
+            <Image
+              src="https://merakiui.com/images/logo.svg"
+              alt="logo"
+              height={24}
+              width={24}
+              className="w-auto h-6"
+            />
+            <span className="sr-only">Acme Inc</span>
+          </Link>
+        </div>
 
-        {routes.map((route) => (
-          <NavLink
-            key={route.href}
-            label={route.label}
-            icon={route.icon}
-            href={route.href}
-            isActive={pathname === route.href}
-          />
-        ))}
-      </nav>
-      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">
-        <Link
-          href="#"
-          title="Settings"
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-        >
-          <Settings className="h-5 w-5" />
-          <span className="sr-only">Settings</span>
-        </Link>
+        {/* middle icons */}
+        <div className="flex flex-col items-center justify-center flex-1 space-y-4">
+          <button className="p-2 text-blue-400 transition-colors duration-200 rounded-full bg-indigo-50 hover:text-blue-600 hover:bg-blue-100 dark:hover:text-light dark:hover:bg-blue-700 dark:bg-dark focus:outline-none focus:bg-blue-100 dark:focus:bg-blue-700 focus:ring-blue-800">
+            <span className="sr-only">Open Notification panel</span>
+            <MagnifyingGlassIcon className="size-6" />
+          </button>
+        </div>
 
-        <Button variant="ghost" onClick={handleLogout} title="Logout">
-          <ExitIcon />
-        </Button>
+        <div className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">
+          <Link
+            href="#"
+            title="Settings"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+          >
+            <Settings className="h-5 w-5" />
+            <span className="sr-only">Settings</span>
+          </Link>
+
+          <Button variant="ghost" onClick={handleLogout} title="Logout">
+            <ExitIcon />
+          </Button>
+        </div>
+      </div>
+
+      {/* SIDEBAR LINKS */}
+      <nav className="flex-1 w-64 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto">
+        {adminRoutes.map(({ href, label, icon: Icon, subMenu, subMenuItems }) =>
+          subMenu ? (
+            <Accordion key={href} type="single" collapsible>
+              <AccordionItem value={label} className="border-none">
+                <AccordionTrigger className="hover:no-underline py-1.5">
+                  <div className="flex items-center gap-4 px-2 text-muted-foreground">
+                    <Icon className="size-5" />
+                    <span className="font-normal text-sm">{label}</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="pl-10 pt-2 pb-0">
+                  {subMenuItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        pathname === item.href
+                          ? 'flex h-9 px-1.5 items-center text-blue-500 transition-colors duration-200 bg-blue-100 rounded-lg'
+                          : 'flex h-9 px-1.5 items-center rounded-lg text-muted-foreground transition-colors hover:text-foreground'
+                      )}
+                    >
+                      <span className="text-sm">{item.label}</span>
+                    </Link>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ) : (
+            <NavLink
+              key={href}
+              label={label}
+              icon={Icon}
+              href={href}
+              isActive={pathname === href}
+            />
+          )
+        )}
       </nav>
     </aside>
   );

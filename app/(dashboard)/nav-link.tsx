@@ -15,13 +15,12 @@ export const NavLink = ({ href, label, icon: Icon, isActive }: Props) => {
       href={href}
       className={cn(
         isActive
-          ? 'flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8'
-          : 'flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8'
+          ? 'flex items-center gap-4 h-9 p-1.5 text-blue-500 transition-colors duration-200 bg-blue-100 rounded-lg dark:text-blue-400 dark:bg-gray-800'
+          : 'flex items-center gap-4 h-9 p-1.5 rounded-lg text-muted-foreground transition-colors hover:text-foreground'
       )}
-      title={label}
     >
       <Icon className="size-5" />
-      <span className="sr-only">{label}</span>
+      <span className="text-sm">{label}</span>
     </Link>
   );
 };

@@ -1,39 +1,43 @@
 import { Metadata } from 'next';
 
 import { Header } from '@/components/header';
-import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/data-table';
-import { columns } from './columns';
 
 import { prisma } from '@/lib/database';
+import { Filters } from './filters';
+import { FilterResults } from './filter-results';
 
 export const metadata: Metadata = {
   title: 'Mahasiswa',
 };
 
-const StudentsPage = async () => {
-  const [students] = await Promise.all([
-    prisma.student.findMany({
-      include: {
-        major: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
+const StudentsPage = async ({
+  searchParams,
+}: {
+  searchParams: { majorId: string; nim: string; fullName: string };
+}) => {
+  const [majors] = await Promise.all([
+    prisma.major.findMany({
+      select: {
+        id: true,
+        name: true,
       },
     }),
   ]);
 
+  const majorOptions = majors.map((major) => ({
+    label: major.name,
+    value: major.id,
+  }));
+
   return (
-    <div className="mx-auto grid max-w-screen-xl flex-1 auto-rows-max gap-4 w-full">
+    <div className="mx-auto grid max-w-screen-xl flex-1 p-4 auto-rows-max gap-4 w-full">
       <Header title="Mahasiswa" subtitle="List seluruh mahasiswa" />
 
-      <DataTable
-        columns={columns}
-        data={students}
-        filterKey="name"
-        href="/admin/students/new"
+      <Filters options={majorOptions} />
+      <FilterResults
+        majorId={searchParams.majorId}
+        nama={searchParams.fullName}
+        nim={searchParams.nim}
       />
     </div>
   );

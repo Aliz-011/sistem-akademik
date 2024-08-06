@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/select';
 
 import { MajorFormValues, majorSchema } from '@/lib/validation';
-import { createMajor } from '@/actions/major.actions';
+import { createMajor, updateMajor } from '@/actions/major.actions';
 
 export const MajorForm = ({
   initialValues,
@@ -44,26 +44,39 @@ export const MajorForm = ({
   const form = useForm<MajorFormValues>({
     resolver: zodResolver(majorSchema),
     defaultValues: {
-      name: '',
-      facultyId: '',
+      name: initialValues?.name || '',
+      facultyId: initialValues?.facultyId || '',
     },
   });
 
   const buttonTitle = initialValues ? 'Save changes' : 'Create';
 
   function onSubmit(values: MajorFormValues) {
-    startTransition(() => {
-      createMajor(values)
-        .then((res) => {
-          toast.success(`Program studi ${res.name} berhasil ditambahkan.`);
-          form.reset();
-          router.push('/admin/majors');
-        })
-        .catch((err) => {
-          console.error(err);
-          toast.error(err.message);
-        });
-    });
+    if (initialValues) {
+      startTransition(async () => {
+        const { error, data } = await updateMajor(initialValues.id, values);
+        if (error) {
+          toast.error(error);
+          return;
+        }
+
+        toast.success(`Program studi ${data?.name} berhasil diubah.`);
+        form.reset();
+        router.push('/admin/majors');
+      });
+    } else {
+      startTransition(async () => {
+        const { error, data } = await createMajor(values);
+        if (error) {
+          toast.error(error);
+          return;
+        }
+
+        toast.success(`Program studi ${data?.name} berhasil ditambahkan.`);
+        form.reset();
+        router.push('/admin/majors');
+      });
+    }
   }
 
   return (

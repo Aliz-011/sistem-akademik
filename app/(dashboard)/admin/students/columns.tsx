@@ -6,9 +6,9 @@ import { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '@/components/data-table-column-header';
 import { Actions } from './actions';
 
-type ColumnsType = Student & { major: { name: string; id: string } };
+export type StudentData = Student & { major: { name: string; id: string } };
 
-export const columns: ColumnDef<ColumnsType>[] = [
+export const columns: ColumnDef<StudentData>[] = [
   {
     accessorKey: 'nim',
     header: ({ column }) => (

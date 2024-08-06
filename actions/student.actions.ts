@@ -5,56 +5,131 @@ import { generateIdFromEntropySize } from 'lucia';
 
 import { prisma } from '@/lib/database';
 import { StudentFormValues, studentSchema } from '@/lib/validation';
+import { isRedirectError } from 'next/dist/client/components/redirect';
+import { validateRequest } from '@/auth';
 
 export const createStudent = async (values: StudentFormValues) => {
-  const validatedFields = studentSchema.safeParse(values);
+  try {
+    const validatedFields = studentSchema.safeParse(values);
 
-  if (!validatedFields.success) {
-    throw new Error('Invalid validation');
+    if (!validatedFields.success) {
+      throw new Error('Invalid validation');
+    }
+
+    const { email, ...rest } = validatedFields.data;
+
+    const existingNIM = await prisma.student.findUnique({
+      where: {
+        nim: rest.nim,
+      },
+    });
+
+    if (existingNIM) {
+      throw new Error('Mahasiswa dengan NIM sudah ada.');
+    }
+
+    const initialName = rest.fullName
+      .split(' ')
+      .map((n) => n[0])
+      .join('');
+    const password = `${initialName}${rest.nim}`;
+
+    const hashedPassword = await hash(password, {
+      memoryCost: 19456,
+      timeCost: 2,
+      outputLen: 32,
+      parallelism: 1,
+    });
+
+    const userId = generateIdFromEntropySize(10);
+
+    await prisma.user.create({
+      data: {
+        id: userId,
+        username: rest.nim,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    const newStudent = await prisma.student.create({
+      data: {
+        ...rest,
+        userId,
+      },
+    });
+
+    return { data: newStudent };
+  } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
+    console.error(error);
+    return {
+      error: 'Something went wrong. Please try again',
+    };
   }
+};
 
-  const { email, ...rest } = validatedFields.data;
+export const updateStudent = async (
+  studentId: string,
+  values: StudentFormValues
+) => {
+  try {
+    const { user } = await validateRequest();
 
-  const existingNIM = await prisma.student.findUnique({
-    where: {
-      nim: rest.nim,
-    },
-  });
+    if (!user) {
+      throw new Error('Unauthorized');
+    }
 
-  if (existingNIM) {
-    throw new Error('Mahasiswa dengan NIM sudah ada.');
+    const validatedFields = studentSchema.safeParse(values);
+
+    if (!validatedFields.success) {
+      throw new Error('Invalid validation');
+    }
+
+    const { nim, ...rest } = validatedFields.data;
+
+    const exisitngStudent = await prisma.student.findFirst({
+      where: {
+        OR: [
+          {
+            id: studentId,
+          },
+          {
+            nim,
+          },
+        ],
+      },
+    });
+
+    if (!exisitngStudent) {
+      return {
+        error: 'Data tidak ditemukan',
+      };
+    }
+
+    const updatedStudent = await prisma.student.update({
+      where: {
+        id: exisitngStudent.id,
+      },
+      data: {
+        ...rest,
+      },
+    });
+
+    return {
+      data: updatedStudent,
+    };
+  } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
+    console.error(error);
+    return {
+      error: 'Something went wrong. Please try again',
+    };
   }
-
-  const initialName = rest.fullName
-    .split(' ')
-    .map((n) => n[0])
-    .join('');
-  const password = `${initialName}${rest.nim}`;
-
-  const hashedPassword = await hash(password, {
-    memoryCost: 19456,
-    timeCost: 2,
-    outputLen: 32,
-    parallelism: 1,
-  });
-
-  const userId = generateIdFromEntropySize(10);
-
-  await prisma.user.create({
-    data: {
-      id: userId,
-      username: rest.nim,
-      email,
-      password: hashedPassword,
-    },
-  });
-
-  const newStudent = await prisma.student.create({
-    data: {
-      ...rest,
-      userId,
-    },
-  });
-
-  return newStudent;
 };

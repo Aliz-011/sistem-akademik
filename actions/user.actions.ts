@@ -124,8 +124,6 @@ export const login = async (values: LoginFormValues) => {
       };
     }
 
-    console.log(existingUser);
-
     const user: UserData = {
       ...existingUser,
       createdAt: existingUser.createdAt.toISOString(),

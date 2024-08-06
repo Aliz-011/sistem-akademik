@@ -2,7 +2,6 @@
 
 import { useTransition } from 'react';
 import { z } from 'zod';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -18,7 +17,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { createFaculty } from '@/actions/faculty.actions';
+import { createFaculty, updateFaculty } from '@/actions/faculty.actions';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
   name: z.string().trim().min(1),
@@ -44,17 +44,29 @@ export const FacultyForm = ({
   const buttonTitle = initialValues ? 'Save changes' : 'Create';
 
   function onSubmit({ name }: FormValues) {
-    startTransition(() => {
-      createFaculty(name)
-        .then((res) => {
-          toast.success(`Fakultas ${res.name} berhasil ditambahkan.`);
-          form.reset();
-          router.push('/admin/faculties');
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    });
+    if (initialValues) {
+      startTransition(async () => {
+        const { error } = await updateFaculty(initialValues.id, name);
+        if (error) {
+          toast.error(error);
+          return;
+        }
+        router.push('/admin/faculties');
+        form.reset();
+        toast.success(`Fakultas ${name} berhasil diubah.`);
+      });
+    } else {
+      startTransition(async () => {
+        const { error } = await createFaculty(name);
+        if (error) {
+          toast.error(error);
+          return;
+        }
+        router.push('/admin/faculties');
+        form.reset();
+        toast.success(`Fakultas ${name} berhasil ditambahkan.`);
+      });
+    }
   }
 
   return (

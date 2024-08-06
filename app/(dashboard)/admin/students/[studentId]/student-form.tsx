@@ -68,17 +68,16 @@ export const StudentForm = ({
   const buttonTitle = initialValues ? 'Save changes' : 'Create';
 
   function onSubmit(values: StudentFormValues) {
-    startTransition(() => {
-      createStudent(values)
-        .then((res) => {
-          toast.success(`Mahasiswa berhasil ditambahkan.`);
-          form.reset();
-          router.push('/admin/students');
-        })
-        .catch((err) => {
-          console.error(err);
-          toast.error(err.message);
-        });
+    startTransition(async () => {
+      const { error } = await createStudent(values);
+      if (error) {
+        toast.error(error);
+        return;
+      }
+
+      toast.success(`Mahasiswa berhasil ditambahkan.`);
+      form.reset();
+      router.push('/admin/students');
     });
   }
 

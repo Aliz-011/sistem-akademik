@@ -24,8 +24,7 @@ import { SearchInput } from './search-input';
 
 import { logout } from '@/actions/user.actions';
 import { useSession } from '@/hooks/use-session';
-// Route diganti sesuai role dari user
-import { routes } from './admin/sidebar';
+import { adminRoutes, studentRoutes } from '@/lib/constants';
 
 export const Navbar = () => {
   const { user } = useSession();
@@ -54,16 +53,28 @@ export const Navbar = () => {
               <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
               <span className="sr-only">Acme Inc</span>
             </Link>
-            {routes.map(({ href, icon: Icon, label }) => (
-              <Link
-                href={href}
-                key={href}
-                className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
-              >
-                <Icon className="h-5 w-5" />
-                {label}
-              </Link>
-            ))}
+            {user.role === 'ADMIN' &&
+              adminRoutes.map(({ href, icon: Icon, label }) => (
+                <Link
+                  href={href}
+                  key={href}
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  <Icon className="size-6" />
+                  {label}
+                </Link>
+              ))}
+            {user.role === 'STUDENT' &&
+              studentRoutes.map(({ href, icon: Icon, label }) => (
+                <Link
+                  href={href}
+                  key={href}
+                  className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                >
+                  <Icon className="size-6" />
+                  {label}
+                </Link>
+              ))}
           </nav>
         </SheetContent>
       </Sheet>
