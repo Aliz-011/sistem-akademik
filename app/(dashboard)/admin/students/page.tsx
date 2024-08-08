@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 
 import { Header } from '@/components/header';
+import { StudentFilter } from './student-filter';
+import { FilterResults } from './filter-results';
 
 import { prisma } from '@/lib/database';
-import { Filters } from './filters';
-import { FilterResults } from './filter-results';
 
 export const metadata: Metadata = {
   title: 'Mahasiswa',
@@ -33,7 +33,7 @@ const StudentsPage = async ({
     <div className="mx-auto grid max-w-screen-xl flex-1 p-4 auto-rows-max gap-4 w-full">
       <Header title="Mahasiswa" subtitle="List seluruh mahasiswa" />
 
-      <Filters options={majorOptions} />
+      <StudentFilter options={majorOptions} />
       <FilterResults
         majorId={searchParams.majorId}
         nama={searchParams.fullName}

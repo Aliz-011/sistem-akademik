@@ -3,7 +3,7 @@
 import { Student } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { DataTableColumnHeader } from '@/components/data-table-column-header';
+import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { Actions } from './actions';
 
 export type StudentData = Student & { major: { name: string; id: string } };

@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-
+import { useRouter } from 'next/navigation';
+import { PlusCircledIcon } from '@radix-ui/react-icons';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -23,10 +24,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { DataTableViewOptions } from './data-table-view-options';
-import { Button } from './ui/button';
-import { useRouter } from 'next/navigation';
-import { PlusCircledIcon } from '@radix-ui/react-icons';
+import { DataTablePagination } from './data-table-pagination';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -136,6 +136,10 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="my-4">
+        <DataTablePagination table={table} />
       </div>
     </div>
   );

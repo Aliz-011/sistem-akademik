@@ -5,9 +5,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex h-screen antialiased">
       <Sidebar />
-      <div className="flex flex-col w-full sm:gap-4 sm:py-4 sm:pl-[18rem]">
+      <div className="flex flex-col w-full sm:gap-4">
         <Navbar />
-        <main className="flex-1 sm:px-6 sm:py-0">{children}</main>
+        <main className="flex-1 sm:px-6 text-base">{children}</main>
       </div>
     </div>
   );

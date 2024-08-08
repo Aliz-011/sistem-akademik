@@ -10,6 +10,7 @@ export const columns: ColumnDef<Faculty>[] = [
   {
     accessorKey: 'name',
     header: 'Nama',
+    cell: ({ row }) => <div className="text-base">{row.original.name}</div>,
   },
   {
     accessorKey: 'createdAt',

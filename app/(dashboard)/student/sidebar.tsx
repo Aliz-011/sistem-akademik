@@ -3,17 +3,24 @@
 import { usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import { Settings } from 'lucide-react';
 import { ExitIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 
-import { NavLink } from '../nav-link';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { NavLink } from '../nav-link';
 
 import { logout } from '@/actions/user.actions';
 import { studentRoutes } from '@/lib/constants';
+import { useSession } from '@/hooks/use-session';
 
 export const Sidebar = () => {
+  const { user } = useSession();
   const pathname = usePathname();
   const queryClient = useQueryClient();
 
@@ -23,45 +30,64 @@ export const Sidebar = () => {
   };
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-      <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
-        <Link
-          href="/"
-          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-        >
+    <aside className="bg-gray-50 hidden md:block w-96">
+      <nav className="h-full flex flex-col border-r shadow-sm">
+        <div className="px-6 py-4 flex items-center gap-2 h-16 border-b">
           <Image
             src="https://merakiui.com/images/logo.svg"
             alt="logo"
             height={24}
             width={24}
-            className="w-auto h-6"
           />
-          <span className="sr-only">Acme Inc</span>
-        </Link>
+          <Link href="/" className="font-bold text-lg">
+            siakad
+          </Link>
+        </div>
 
-        {studentRoutes.map((route) => (
-          <NavLink
-            key={route.href}
-            label={route.label}
-            icon={route.icon}
-            href={route.href}
-            isActive={pathname === route.href}
-          />
-        ))}
-      </nav>
-      <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">
-        <Link
-          href="#"
-          title="Settings"
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-        >
-          <Settings className="h-5 w-5" />
-          <span className="sr-only">Settings</span>
-        </Link>
+        <ul className="flex-1 px-3 py-6">
+          {studentRoutes.map(({ href, icon, label }) => (
+            <NavLink
+              key={href}
+              href={href}
+              label={label}
+              icon={icon}
+              isActive={pathname === href}
+            />
+          ))}
+        </ul>
 
-        <Button variant="ghost" onClick={handleLogout} title="Logout">
-          <ExitIcon />
-        </Button>
+        <div className="flex items-center gap-2 py-6 px-3">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="overflow-hidden rounded-full size-8"
+              >
+                <Image
+                  src={user.avatarUrl || '/user-placeholder.svg'}
+                  width={20}
+                  height={20}
+                  alt="Avatar"
+                  className="overflow-hidden rounded-full"
+                />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="right">
+              <DropdownMenuItem asChild>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 w-full cursor-pointer"
+                >
+                  <ExitIcon />
+                  Logout
+                </button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <span className="font-medium text-lg">{user.username}</span>
+        </div>
       </nav>
     </aside>
   );

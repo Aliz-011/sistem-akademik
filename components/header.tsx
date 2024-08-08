@@ -10,7 +10,9 @@ export const Header = ({
       <h1 className="flex-1 shrink-0 whitespace-nowrap text-2xl font-semibold tracking-tight sm:grow-0">
         {title}
       </h1>
-      <span className="text-muted-foreground text-sm">{subtitle}</span>
+      <span className="text-muted-foreground text-base font-medium">
+        {subtitle}
+      </span>
     </div>
   );
 };

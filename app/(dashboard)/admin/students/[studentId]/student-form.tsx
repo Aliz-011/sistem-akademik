@@ -223,15 +223,33 @@ export const StudentForm = ({
                     >
                       <FormItem className="flex items-center space-x-3 space-y-0">
                         <FormControl>
-                          <RadioGroupItem value={Sexes.MALE} />
+                          <RadioGroupItem
+                            id="male"
+                            value={Sexes.MALE}
+                            className="peer sr-only"
+                          />
                         </FormControl>
-                        <FormLabel className="font-normal">Laki-laki</FormLabel>
+                        <FormLabel
+                          htmlFor="male"
+                          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover px-4 py-3 cursor-pointer hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                        >
+                          Laki-laki
+                        </FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-3 space-y-0">
                         <FormControl>
-                          <RadioGroupItem value={Sexes.FEMALE} />
+                          <RadioGroupItem
+                            id="female"
+                            value={Sexes.FEMALE}
+                            className="peer sr-only"
+                          />
                         </FormControl>
-                        <FormLabel className="font-normal">Perempuan</FormLabel>
+                        <FormLabel
+                          htmlFor="female"
+                          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover px-4 py-3 cursor-pointer hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                        >
+                          Perempuan
+                        </FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>

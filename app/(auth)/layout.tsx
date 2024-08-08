@@ -15,7 +15,7 @@ const AuthLayout = async ({ children }: Props) => {
   }
 
   return (
-    <div className="w-full h-screen lg:grid lg:grid-cols-2">
+    <div className="w-full h-screen lg:grid lg:grid-cols-2 text-base">
       {children}
       <div className="hidden bg-muted lg:block">
         <Image

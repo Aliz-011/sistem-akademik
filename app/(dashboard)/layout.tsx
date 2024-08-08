@@ -12,9 +12,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SessionProvider value={session}>
-      <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        {children}
-      </div>
+      <div className="flex min-h-screen w-full flex-col">{children}</div>
     </SessionProvider>
   );
 };

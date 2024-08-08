@@ -51,6 +51,15 @@ enum Sexes {
   FEMALE
 }
 
+enum StudentStatus {
+  ACTIVE
+  DROPPED
+  FURLOUGH
+  NONACTIVE
+  GRADUATED
+  EXIT
+}
+
 model Student {
   id          String             @id @default(cuid())
   nim         String             @unique
@@ -59,10 +68,12 @@ model Student {
   sex         Sexes
   phoneNumber String?            @db.VarChar(15)
   userId      String             @unique
+  status      StudentStatus      @default(ACTIVE)
   user        User               @relation(fields: [userId], references: [id], onDelete: NoAction)
   majorId     String
   major       Major              @relation(fields: [majorId], references: [id], onDelete: NoAction)
   classes     StudentOnClasses[]
+  grades      Grade[]
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -148,10 +159,22 @@ model Class {
   academicYear   AcademicYear       @relation(fields: [academicYearId], references: [id], onDelete: NoAction)
   schedules      Schedule[]
   students       StudentOnClasses[]
+  grades         Grade[]
 
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("classes")
+}
+
+model Grade {
+  id        String  @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId   String
+  class     Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  grade     String  @db.VarChar(2)
+
+  @@map("grades")
 }
 
 enum DAY {

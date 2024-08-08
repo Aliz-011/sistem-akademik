@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Urbanist } from 'next/font/google';
 
 import './globals.css';
 
@@ -7,7 +7,10 @@ import { Toaster } from '@/components/ui/sonner';
 
 import { QueryProvider } from '@/providers/query-provider';
 
-const inter = Inter({ subsets: ['latin'] });
+const font = Urbanist({
+  subsets: ['latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800'],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -24,7 +27,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={font.className}>
         <QueryProvider>
           <Toaster />
           {children}

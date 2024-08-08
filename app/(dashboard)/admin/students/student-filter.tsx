@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import qs from 'query-string';
 import { useState } from 'react';
 
@@ -21,7 +21,8 @@ type Props = {
   }[];
 };
 
-export const Filters = ({ options }: Props) => {
+export const StudentFilter = ({ options }: Props) => {
+  const pathname = usePathname();
   const router = useRouter();
   const [nim, setNim] = useState('');
   const [majorId, setMajorId] = useState('');
@@ -36,7 +37,7 @@ export const Filters = ({ options }: Props) => {
 
     const url = qs.stringifyUrl(
       {
-        url: '/admin/students',
+        url: pathname,
         query: {
           majorId,
           angk_awal: '',
@@ -63,7 +64,7 @@ export const Filters = ({ options }: Props) => {
       >
         <div className="flex items-center justify-between gap-2">
           <p>Program studi</p>
-          <Select onValueChange={setMajorId} defaultValue="">
+          <Select onValueChange={setMajorId} defaultValue={majorId}>
             <SelectTrigger className="w-auto md:w-[500px]">
               <SelectValue placeholder="PILIH PROGRAM STUDI" />
             </SelectTrigger>
@@ -127,7 +128,16 @@ export const Filters = ({ options }: Props) => {
         </div>
 
         <div className="flex items-center gap-4 justify-end">
-          <Button size="sm" variant="secondary" type="reset">
+          <Button
+            size="sm"
+            variant="secondary"
+            type="button"
+            onClick={() => {
+              setMajorId('');
+              setNama('');
+              setNim('');
+            }}
+          >
             Reset
           </Button>
           <Button size="sm">Tampilkan</Button>
