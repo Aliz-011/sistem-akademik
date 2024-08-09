@@ -9,6 +9,10 @@ const nextConfig = {
         hostname: 'imageplaceholder.net',
         protocol: 'https',
       },
+      {
+        hostname: 'github.com',
+        protocol: 'https',
+      },
     ],
   },
   async headers() {

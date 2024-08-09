@@ -6,6 +6,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
 
 import { QueryProvider } from '@/providers/query-provider';
+import { ThemeProvider } from '@/providers/theme-provider';
 
 const font = Urbanist({
   subsets: ['latin'],
@@ -29,8 +30,10 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={font.className}>
         <QueryProvider>
-          <Toaster />
-          {children}
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Toaster />
+            {children}
+          </ThemeProvider>
         </QueryProvider>
       </body>
     </html>

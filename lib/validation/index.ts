@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Sexes } from '@prisma/client';
+import { Sexes, SubjectType } from '@prisma/client';
 
 export const registerSchema = z.object({
   email: z.string().trim().email({ message: 'Invalid email' }).min(1),
@@ -44,3 +44,43 @@ export const majorSchema = z.object({
 });
 
 export type MajorFormValues = z.infer<typeof majorSchema>;
+
+export const curriculumSchema = z.object({
+  name: z.string().trim().min(3),
+  year: z
+    .string()
+    .trim()
+    .min(4)
+    .regex(/^[0-9]+$/, 'Only numbers are allowed'),
+  decisionDate: z.coerce.date(),
+  approvedAt: z.coerce.date(),
+  idealStudyPeriod: z.string().trim().min(1),
+  maxStudyPeriod: z.string().trim().min(1),
+  consentBy: z.string().trim().optional(),
+  notes: z.string().optional(),
+  majorId: z.string().min(1),
+});
+
+export type CurriculumFormValues = z.infer<typeof curriculumSchema>;
+
+export const subjectSchema = z.object({
+  name: z.string().trim().min(1),
+  alias: z.string().trim().min(1),
+  credit: z.number().gte(1),
+  type: z.enum([
+    SubjectType.REQUIRED,
+    SubjectType.OPTIONAL,
+    SubjectType.REQUIRED_INTEREST,
+    SubjectType.THESIS,
+  ]),
+  semester: z
+    .string()
+    .trim()
+    .min(1)
+    .regex(/^[0-9]+$/, 'Only numbers are allowed'),
+  majorId: z.string().min(1),
+  lecturerId: z.string().min(1),
+  curriculumId: z.string().min(1),
+});
+
+export type SubjectFormValues = z.infer<typeof subjectSchema>;

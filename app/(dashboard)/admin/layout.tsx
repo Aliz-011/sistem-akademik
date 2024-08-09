@@ -3,7 +3,7 @@ import { Sidebar } from './sidebar';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex h-screen antialiased">
+    <div className="flex min-h-screen antialiased">
       <Sidebar />
       <div className="flex flex-col w-full sm:gap-4">
         <Navbar />

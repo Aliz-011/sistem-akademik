@@ -4,13 +4,13 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { DataTableColumnHeader } from '@/components/data-table/data-table-column-header';
 import { Actions } from './actions';
-import { StudentData } from '@/types';
+import { Lecturer } from '@prisma/client';
 
-export const columns: ColumnDef<StudentData>[] = [
+export const columns: ColumnDef<Lecturer>[] = [
   {
-    accessorKey: 'nim',
+    accessorKey: 'nip',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="NIM" />
+      <DataTableColumnHeader column={column} title="NIP" />
     ),
   },
   {
@@ -19,11 +19,11 @@ export const columns: ColumnDef<StudentData>[] = [
       <DataTableColumnHeader column={column} title="Nama" />
     ),
   },
-  {
-    accessorKey: 'majorId',
-    header: 'Program studi',
-    cell: ({ row }) => <div>{row.original.major.name}</div>,
-  },
+  //   {
+  //     accessorKey: 'majorId',
+  //     header: 'Program studi',
+  //     cell: ({ row }) => <div>{row.original.major.name}</div>,
+  //   },
   {
     id: 'actions',
     cell: ({ row }) => <Actions id={row.original.id} />,

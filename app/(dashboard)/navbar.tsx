@@ -48,7 +48,7 @@ export const Navbar = () => {
                 </span>
               )}
               {index === crumbs.length - 1 ? (
-                <span className="text-gray-600 capitalize">
+                <span className="text-gray-600 dark:text-white capitalize">
                   {crumb.label.toLowerCase()}
                 </span>
               ) : (

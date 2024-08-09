@@ -81,15 +81,16 @@ model Student {
 }
 
 model Lecturer {
-  id          String   @id @default(cuid())
-  nip         String   @unique
-  fullName    String   @map("full_name")
-  birthDate   DateTime @map("birth_date")
+  id          String    @id @default(cuid())
+  nip         String    @unique
+  fullName    String    @map("full_name")
+  birthDate   DateTime  @map("birth_date")
   sex         Sexes
-  phoneNumber String?  @db.VarChar(15)
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id], onDelete: NoAction)
+  phoneNumber String?   @db.VarChar(15)
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: NoAction)
   classes     Class[]
+  subjects    Subject[]
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -107,30 +108,62 @@ model Faculty {
 }
 
 model Major {
-  id        String    @id @default(cuid())
-  name      String    @db.VarChar(50)
-  facultyId String    @map("faculty_id")
-  faculty   Faculty   @relation(fields: [facultyId], references: [id], onDelete: Cascade)
-  students  Student[]
-  courses   Course[]
+  id          String       @id @default(cuid())
+  name        String       @db.VarChar(50)
+  facultyId   String       @map("faculty_id")
+  faculty     Faculty      @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  students    Student[]
+  subjects    Subject[]
+  curriculums Curriculum[]
 
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("majors")
 }
 
-model Course {
-  id      String  @id @default(cuid())
-  name    String
-  alias   String
-  credit  Int
-  majorId String  @map("major_id")
-  major   Major   @relation(fields: [majorId], references: [id], onDelete: Cascade)
-  classes Class[]
+model Curriculum {
+  id               String    @id @default(cuid())
+  name             String    @unique
+  year             String    @db.VarChar(4)
+  decisionDate     DateTime  @map("decision_date") @db.Date // Tanggal Keputusan
+  approvedAt       DateTime  @map("approved_at") @db.Date // Tanggal Disetujui
+  idealStudyPeriod String    @map("ideal_study_period")
+  maxStudyPeriod   String    @map("max_study_period")
+  consentBy        String?   @map("consent_by")
+  notes            String?   @db.Text
+  majorId          String    @map("major_id")
+  major            Major     @relation(fields: [majorId], references: [id], onDelete: Cascade)
+  subjects         Subject[]
+
+  @@map("curriculums")
+}
+
+enum SubjectType {
+  REQUIRED
+  OPTIONAL
+  THESIS
+  REQUIRED_INTEREST
+}
+
+model Subject {
+  id           String      @id @default(cuid())
+  name         String
+  alias        String
+  credit       Int
+  type         SubjectType
+  semester     String      @db.VarChar(2)
+  majorId      String      @map("major_id")
+  major        Major       @relation(fields: [majorId], references: [id], onDelete: Cascade)
+  lecturerId   String?     @map("lecturer_id")
+  lecturer     Lecturer?   @relation(fields: [lecturerId], references: [id], onDelete: NoAction)
+  curriculumId String      @map("curriculum_id")
+  curriculum   Curriculum  @relation(fields: [curriculumId], references: [id], onDelete: NoAction)
+  classes      Class[]
 
   createdAt DateTime @default(now()) @map("created_at")
 
-  @@map("courses")
+  @@index([lecturerId, majorId, curriculumId])
+  @@map("subjects")
 }
 
 enum Period {
@@ -151,8 +184,8 @@ model Class {
   id             String             @id @default(cuid())
   name           String
   semester       String             @db.VarChar(2)
-  courseId       String             @map("course_id")
-  course         Course             @relation(fields: [courseId], references: [id], onDelete: NoAction)
+  subjectId      String             @map("course_id")
+  subject        Subject            @relation(fields: [subjectId], references: [id], onDelete: NoAction)
   lecturerId     String             @map("lecturer_id")
   lecturer       Lecturer           @relation(fields: [lecturerId], references: [id], onDelete: NoAction)
   academicYearId String             @map("academic_year_id")
@@ -163,17 +196,19 @@ model Class {
 
   createdAt DateTime @default(now()) @map("created_at")
 
+  @@index([subjectId, lecturerId, academicYearId])
   @@map("classes")
 }
 
 model Grade {
   id        String  @id @default(cuid())
-  studentId String
+  studentId String  @map("student_id")
   student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  classId   String
+  classId   String  @map("class_id")
   class     Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
   grade     String  @db.VarChar(2)
 
+  @@index([studentId, classId])
   @@map("grades")
 }
 
@@ -198,9 +233,9 @@ model Schedule {
 }
 
 model StudentOnClasses {
-  studentId String
+  studentId String  @map("student_id")
   student   Student @relation(fields: [studentId], references: [id])
-  classId   String
+  classId   String  @map("class_id")
   class     Class   @relation(fields: [classId], references: [id])
 
   @@id([studentId, classId])

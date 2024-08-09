@@ -46,8 +46,8 @@ const MajorDetail = async ({
 
   return (
     <div className="mx-auto max-w-[59rem] w-full space-y-4">
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="icon" className="size-7" asChild>
+      <div className="flex items-center gap-3">
+        <Button variant="outline" size="icon" className="size-6" asChild>
           <Link href="/admin/majors">
             <ChevronLeftIcon className="size-4" />
             <span className="sr-only">Back</span>

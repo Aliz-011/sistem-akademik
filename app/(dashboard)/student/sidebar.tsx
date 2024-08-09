@@ -3,14 +3,26 @@
 import { usePathname } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import { ExitIcon } from '@radix-ui/react-icons';
+import { useTheme } from 'next-themes';
+import {
+  MoonIcon,
+  SunIcon,
+  ExitIcon,
+  DesktopIcon,
+} from '@radix-ui/react-icons';
 import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NavLink } from '../nav-link';
@@ -22,6 +34,7 @@ import { useSession } from '@/hooks/use-session';
 export const Sidebar = () => {
   const { user } = useSession();
   const pathname = usePathname();
+  const { setTheme } = useTheme();
   const queryClient = useQueryClient();
 
   const handleLogout = async () => {
@@ -30,7 +43,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <aside className="bg-gray-50 hidden md:block w-96">
+    <aside className="bg-gray-50 dark:bg-neutral-900/80 hidden lg:block w-96">
       <nav className="h-full flex flex-col border-r shadow-sm">
         <div className="px-6 py-4 flex items-center gap-2 h-16 border-b">
           <Image
@@ -65,15 +78,50 @@ export const Sidebar = () => {
                 className="overflow-hidden rounded-full size-8"
               >
                 <Image
-                  src={user.avatarUrl || '/user-placeholder.svg'}
+                  src={user.avatarUrl || 'https://github.com/shadcn.png'}
                   width={20}
                   height={20}
                   alt="Avatar"
-                  className="overflow-hidden rounded-full"
+                  className="overflow-hidden size-full rounded-full"
                 />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" side="right">
+            <DropdownMenuContent align="end" side="right" className="w-48">
+              <DropdownMenuGroup>
+                <DropdownMenuItem>Team</DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className="flex items-center gap-3">
+                    <DesktopIcon className="size-4" />
+                    Dark Mode
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem
+                        onClick={() => setTheme('light')}
+                        className="flex items-center gap-3"
+                      >
+                        <SunIcon className="size-4" />
+                        Light
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setTheme('dark')}
+                        className="flex items-center gap-3"
+                      >
+                        <MoonIcon className="size-4" />
+                        Dark
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => setTheme('system')}
+                        className="flex items-center gap-3"
+                      >
+                        <DesktopIcon className="size-4" />
+                        System
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <button
                   onClick={handleLogout}

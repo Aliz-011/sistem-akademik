@@ -6,27 +6,31 @@ import { DataTable } from '@/components/data-table';
 import { columns } from './columns';
 
 import { kyInstance } from '@/lib/ky';
-import { StudentData } from '@/types';
+import { SubjectData } from '@/types';
 
 type Props = {
-  nama: string;
-  nim: string;
+  subjectName: string;
+  subjectAlias: string;
   majorId: string;
 };
 
-export const FilterResults = ({ majorId, nama, nim }: Props) => {
+export const FilterResults = ({
+  majorId,
+  subjectAlias,
+  subjectName,
+}: Props) => {
   const { isLoading, isPending, data } = useQuery({
-    queryKey: ['students-filter', majorId, nim, nama],
+    queryKey: ['subjects-filter', majorId, subjectName, subjectAlias],
     queryFn: async () =>
       kyInstance
-        .get('/api/students', {
+        .get('/api/curriculum/subjects', {
           searchParams: {
             majorId,
-            nim,
-            fullName: nama,
+            alias: subjectAlias,
+            name: subjectName,
           },
         })
-        .json<StudentData[]>(),
+        .json<SubjectData[]>(),
     gcTime: 0,
   });
 
@@ -39,9 +43,9 @@ export const FilterResults = ({ majorId, nama, nim }: Props) => {
       {!!data && (
         <DataTable
           columns={columns}
-          data={data}
-          filterKey="fullName"
-          href="/admin/students/new"
+          data={[]}
+          filterKey="name"
+          href="/admin/curriculum/subjects/new"
         />
       )}
     </>

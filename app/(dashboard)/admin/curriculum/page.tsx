@@ -2,8 +2,13 @@ import { Header } from '@/components/header';
 
 import { prisma } from '@/lib/database';
 import { CurriculumFilter } from './curriculum-filter';
+import { FilterResults } from './filter-results';
 
-const CurriculumPage = async () => {
+const CurriculumPage = async ({
+  searchParams: { majorId },
+}: {
+  searchParams: { majorId: string };
+}) => {
   const [majors] = await Promise.all([
     prisma.major.findMany({
       select: {
@@ -22,6 +27,7 @@ const CurriculumPage = async () => {
       <Header title="Kurikulum" subtitle="Manajemen kurikulum" />
 
       <CurriculumFilter options={majorOptions} />
+      <FilterResults majorId={majorId} />
     </div>
   );
 };

@@ -51,9 +51,10 @@ export const CurriculumFilter = ({ options }: Props) => {
         onSubmit={handleSubmit}
         method="GET"
         action="/admin/curriculum"
-        className="w-fit flex items-center gap-4"
+        className="w-fit flex flex-col gap-4"
       >
-        <div className="grid gap-2">
+        <h2 className="text-lg font-medium">Form Pencarian Program Studi</h2>
+        <div className="flex items-center gap-4">
           <Select onValueChange={setMajorId} defaultValue={majorId}>
             <SelectTrigger className="w-full md:w-[500px]">
               <SelectValue placeholder="PILIH PROGRAM STUDI" />
@@ -66,9 +67,8 @@ export const CurriculumFilter = ({ options }: Props) => {
               ))}
             </SelectContent>
           </Select>
+          <Button size="sm">Tampilkan</Button>
         </div>
-
-        <Button size="sm">Tampilkan</Button>
       </form>
     </div>
   );

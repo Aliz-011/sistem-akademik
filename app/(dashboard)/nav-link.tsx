@@ -32,7 +32,7 @@ export const NavLink = ({
         <>
           <button
             onClick={() => setSubMenuOpen((prev) => !prev)}
-            className="flex w-full text-start py-2 px-3 font-semibold text-muted-foreground rounded-md"
+            className="flex w-full text-start py-2 px-3 font-semibold text-muted-foreground rounded-md relative"
           >
             {subMenuOpen ? (
               <FolderOpen className="size-6" />
@@ -46,6 +46,10 @@ export const NavLink = ({
             ) : (
               <ChevronLeftIcon className="size-5" />
             )}
+
+            {subMenuOpen && (
+              <div className="absolute left-0 h-6 w-1 bg-blue-500" />
+            )}
           </button>
 
           <ul className="pl-6">
@@ -58,7 +62,7 @@ export const NavLink = ({
                     className={cn(
                       'relative flex w-full text-start py-2 px-3 font-semibold text-muted-foreground rounded-md cursor-pointer transition-colors duration-200',
                       pathname === subMenuItem.href
-                        ? 'bg-gray-200 text-foreground'
+                        ? 'bg-gray-200 dark:bg-slate-800 text-foreground'
                         : 'hover:text-foreground'
                     )}
                   >
@@ -80,7 +84,9 @@ export const NavLink = ({
           href={href}
           className={cn(
             'relative flex items-center py-2 px-3 my-1 font-semibold text-muted-foreground rounded-md cursor-pointer transition-colors duration-200',
-            isActive ? 'bg-gray-200 text-foreground' : 'hover:text-foreground'
+            isActive
+              ? 'bg-gray-200 dark:bg-slate-800 text-foreground'
+              : 'hover:text-foreground'
           )}
         >
           <Icon className="size-5" />
